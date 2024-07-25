@@ -1,0 +1,83 @@
+.anim {
+  --transition-overshoot: cubic-bezier(0.33, 2.09, 0.81, 0.72);
+  
+  // ELEMENTS STARTS HIDDEN
+  opacity: 0;
+  visibility: hidden;
+}
+
+/**
+* @deprecated
+
+* @desc No need to declare it starts hidden, since is the default
+        Hence the deprecation, soon we'll have the oposite, "start-visible"
+**/
+.anim-hidden { 
+  opacity: 0;
+  visibility: hidden;
+}
+
+@property --COUNTER {
+  syntax: '<integer>';
+  initial-value: 0;
+  inherits: false;
+}
+
+.anim-counter {
+  transition: --COUNTER 2s cubic-bezier(.35,.92,0,.98);
+  counter-reset: COUNTER var(--COUNTER);
+
+  &::after {
+    content: counter(COUNTER)
+  }
+}
+
+.anim-show {
+  --TRANSLATION-X-AMOUNT: 100%;
+  --TRANSLATION-Y-AMOUNT: 100%;
+
+  --TRANSITION-TYPE: ease-out;
+  --TRANSITION-DURATION: 0.5s;
+  --TRANSITION-DELAY:      0s;
+  --TRANSITION-STATE: forwards;
+  
+
+  // FADE IN IS THE DEFAULT BEHAVIOUR
+  &.fadeIn { }
+
+  &.fromAbove { --TRANSLATION-Y-AMOUNT: calc(0px - var(--TRANSLATION-AMOUNT)); }
+  &.fromUnder { --TRANSLATION-Y-AMOUNT: var(--TRANSLATION-AMOUNT);}
+  &.fromLeft  { --TRANSLATION-X-AMOUNT: calc(0px - var(--TRANSLATION-AMOUNT));}
+  &.fromRight { --TRANSLATION-X-AMOUNT: var(--TRANSLATION-AMOUNT);}
+
+  &.pop { 
+    transform: scale(0);
+  }
+
+  // TRANSITIONS
+  &.overshoot {
+    --TRANSITION-TYPE: var(--transition-overshoot);
+  }
+
+
+  transform: translate(
+    var(--TRANSLATION-X-AMOUNT),
+    var(--TRANSLATION-Y-AMOUNT)
+  ); 
+
+  animation: 
+    drop 
+    var(--TRANSITION-DURATION) 
+    var(--TRANSITION-TYPE) 
+    var(--TRANSITION-STATE);
+
+}
+
+@keyframes drop {
+  from{opacity: 0}
+  to { 
+    transform: translate(0, 0) scale(1); 
+    opacity: 1;
+    visibility: visible;
+  }
+}
